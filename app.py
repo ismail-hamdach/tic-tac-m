@@ -10,19 +10,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connection details
-zk = zkInitConnection(os.getenv('DEVICE_IP'), os.getenv('DEVICE_PORT'), timeout=5, password=0)
 
 
 
 def main():
-    conn = connect_device(zk)
-    if conn:
-        db, cursor = dbInitConnection(os.getenv('DB_HOST'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_NAME'))
-        dbSync()
-        # fetch_attendance(conn)
-        monitor_real_time(conn, db, cursor)
-        conn.disconnect()
-        print("Disconnected from device")
+    try:
+        zk = zkInitConnection()
+        conn = connect_device(zk)
+        if conn:
+            print("Connected to device")
+            db, cursor = dbInitConnection(os.getenv('DB_HOST'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_NAME'))
+            dbSync()
+            # fetch_attendance(conn)
+            monitor_real_time(conn, db, cursor)
+            conn.disconnect()
+            print("Disconnected from device")
+    except Exception as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()

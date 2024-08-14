@@ -3,9 +3,12 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+ip = os.getenv('DEVICE_IP')
+port = int(os.getenv('DEVICE_PORT'))
 
-def zkInitConnection(ip=os.getenv('DEVICE_IP'), port=os.getenv('DEVICE_PORT'), timeout=5, password=0):
-    return ZK(ip, port=port, timeout=timeout, password=password)
+
+def zkInitConnection():
+    return ZK(ip, port)
 
 def connect_device(zk):
     try:
