@@ -1,6 +1,10 @@
 from zk import ZK, const
+import os
+from dotenv import load_dotenv
 
-def zkInitConnection(ip, port=4370, timeout=5, password=0):
+load_dotenv()
+
+def zkInitConnection(ip=os.getenv('DEVICE_IP'), port=os.getenv('DEVICE_PORT'), timeout=5, password=0):
     return ZK(ip, port=port, timeout=timeout, password=password)
 
 def connect_device(zk):
@@ -32,18 +36,6 @@ def fetch_attendance(conn):
     except Exception as e:
         print(f"Error fetching attendance: {e}")
 
-# def monitor_real_time(conn):
-#     try:
-#         for att in conn.live_capture():
-#             if att is None:
-#                 print("No new attendance captured...")
-#             else:
-#                 # serialize the attendance object to JSON
-#                 # att_json = json.dumps(att)
-#                 print(att)
-#                 print(f"Real-time attendance: User ID: {att.user_id}, Time: {att.timestamp}, Status: {att.punch}")
-#     except Exception as e:
-#         print(f"Error monitoring real-time attendance: {e}")
 
 def monitor_real_time(conn, db, cursor):
     try:

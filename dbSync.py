@@ -2,14 +2,18 @@ import mysql.connector
 from zk import ZK, const
 from helpers import stptime
 from mysqlHelper import dbInitConnection, dbCloseConnection
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def dbSync():
     try:
         # MySQL Connection
-        db, cursor = dbInitConnection("localhost", "root", "", "tictacm")
+        db, cursor = dbInitConnection(os.getenv('DB_HOST'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_NAME'))
 
         # ZKTeco Device Connection
-        zk = ZK('192.168.2.250', port=4370, timeout=5, password=0)
+        zk = ZK(os.getenv('DEVICE_IP'), port=os.getenv('DEVICE_PORT'), timeout=5, password=0)
         conn = zk.connect()
         logs = conn.get_attendance()
 
