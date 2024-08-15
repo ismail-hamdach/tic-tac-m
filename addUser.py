@@ -7,13 +7,15 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+ip = os.getenv('DEVICE_IP')
+port = int(os.getenv('DEVICE_PORT'))
 
 # MySQL Database Connection 
 db, cursor = dbInitConnection()
 
 # Connect to the ZKTeco device
 conn = None
-zk = zkInitConnection(os.getenv('DEVICE_IP'), os.getenv('DEVICE_PORT'), timeout=5, password=0)
+zk = zkInitConnection()
 
 def addUser(user_name):
     try:
@@ -22,7 +24,7 @@ def addUser(user_name):
         print("Connected to ZKTeco device")
 
         # Example user details
-        user_id = str(uuid.uuid4())
+        user_id = '34212'  #str(uuid.uuid4())
         # user_name = "hamdach ismail"
         privilege = const.USER_DEFAULT  # Regular user
         password = "123456"  # Optional
@@ -57,3 +59,5 @@ def addUser(user_name):
             conn.disconnect()
         cursor.close()
         db.close()
+
+addUser("Aymane El cadi")
