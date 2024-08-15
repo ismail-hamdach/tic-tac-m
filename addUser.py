@@ -6,35 +6,33 @@ import uuid
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-ip = os.getenv('DEVICE_IP')
-port = int(os.getenv('DEVICE_PORT'))
 
-# MySQL Database Connection 
-db, cursor = dbInitConnection()
-
-# Connect to the ZKTeco device
-conn = None
-zk = zkInitConnection()
 
 def addUser(user_name):
     try:
+
+        # MySQL Database Connection 
+        db, cursor = dbInitConnection()
+        print("Connected to MySQL database")
+
+        # Connect to the ZKTeco device
+        conn = None
+        zk = zkInitConnection()
         # Establish connection to the device
         conn = zk.connect()
         print("Connected to ZKTeco device")
 
         # Example user details
-        user_id = '34212'  #str(uuid.uuid4())
-        # user_name = "hamdach ismail"
+        user_id = str(uuid.uuid4().int)[:5]
         privilege = const.USER_DEFAULT  # Regular user
         password = "123456"  # Optional
         group_id = 0  # Optional
         user_card = None  # Optional
         user_fp_index = 0  # Index for the fingerprint (0 is typically the first finger)
 
-        print(f"User {user_name} with ID {user_id} added to device")
         # Add the user to the device (without fingerprint yet)
         conn.set_user(uid=int(user_id), name=user_name, privilege=privilege, password=password, user_id=user_id)
+        print(f"User {user_name} with ID {user_id} added to device")
 
         # Enroll fingerprint for the user
         print("Please scan the fingerprint...")
@@ -53,11 +51,14 @@ def addUser(user_name):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
     finally:
         # Close connections
         if conn:
             conn.disconnect()
+            print("Disconnected from ZKTeco device")
         cursor.close()
         db.close()
-
+        print("Disconnected from MySQL database")
+        
 addUser("Aymane El cadi")
