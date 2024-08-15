@@ -35,6 +35,7 @@ def dbSync():
         last_stored_timestamp = cursor.fetchone()[0] or '1970-01-01 00:00:00'
         print(f"Last stored timestamp: {last_stored_timestamp}")
 
+        # TODO: Check for logs not stored in MySQL using other method because this method ignore logs stored in period of lost connection
         # Filter logs not stored
         logs_to_store = [log for log in logs if stptime(log.timestamp) > stptime(last_stored_timestamp)]
         print(f"Storing {len(logs_to_store)} logs")

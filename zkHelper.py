@@ -55,6 +55,7 @@ def monitor_real_time(conn, db, cursor):
                     (att.user_id, att.timestamp, att.punch)
                 )
                 result = cursor.fetchone()
+            
 
                 # If the log does not exist, insert it into the database
                 if result is None:

@@ -8,6 +8,10 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+db_host = os.getenv('DB_HOST')
+db_user = os.getenv('DB_USER')
+db_password = os.getenv('DB_PASSWORD')
+db_name = os.getenv('DB_NAME')
 
 # Connection details
 
@@ -19,10 +23,11 @@ def main():
         conn = connect_device(zk)
         if conn:
             print("Connected to device")
-            db, cursor = dbInitConnection(os.getenv('DB_HOST'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_NAME'))
+            db, cursor = dbInitConnection(db_host, db_user, db_password, db_name)
             dbSync()
             # fetch_attendance(conn)
             monitor_real_time(conn, db, cursor)
+            dbCloseConnection(db, cursor)
             conn.disconnect()
             print("Disconnected from device")
     except Exception as e:
