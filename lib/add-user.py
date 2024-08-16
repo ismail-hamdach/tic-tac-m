@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Add the directory containing mysqlHelper to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 import mysql.connector
 from zk import ZK, const
 from mysqlHelper import dbInitConnection, dbCloseConnection
@@ -10,11 +17,9 @@ from dotenv import load_dotenv
 
 def addUser(user_name):
     try:
-
         # MySQL Database Connection 
         db, cursor = dbInitConnection()
         print("Connected to MySQL database")
-
         # Connect to the ZKTeco device
         conn = None
         zk = zkInitConnection()
@@ -51,8 +56,6 @@ def addUser(user_name):
     except Exception as e:
         print(f"An error occurred: {e}")
         raise
-
-
     finally:
         # Close connections
         if conn:
@@ -62,5 +65,4 @@ def addUser(user_name):
         db.close()
         print("Disconnected from MySQL database")
     return user_id, user_name
-        
-# addUser("Aymane El cadi")
+
