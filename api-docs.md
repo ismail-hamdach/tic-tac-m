@@ -15,11 +15,27 @@ Checks if a connection can be established to a specified IP address and port.
   ```
 - **Success Response:**
   - **Code:** 200
-  - **Content:** `{ "status": "Connection successful" }`
+  - **Content:** 
+    ```json
+    {
+      "status": "Connection successful"
+    }
+    ```
 - **Error Response:**
   - **Code:** 400
-  - **Content:** `{ "error": "IP address and port are required" }`
-  - **Content:** `{ "status": "Connection failed", "error": "error message" }`
+  - **Content:** 
+    ```json
+    {
+      "error": "IP address and port are required"
+    }
+    ```
+    or
+    ```json
+    {
+      "status": "Connection failed",
+      "error": "error message"
+    }
+    ```
 
 ## Add User
 
@@ -35,9 +51,28 @@ Adds a new user to the system.
   ```
 - **Success Response:**
   - **Code:** 201
-  - **Content:** `{ "message": "User {user_name} added successfully" }`
+  - **Content:** 
+    ```json
+    {
+      "message": "User {user_name} added successfully",
+      "data": {
+        "user_id": "string or number",
+        "user_name": "string"
+      }
+    }
+    ```
 - **Error Response:**
   - **Code:** 400
-  - **Content:** `{ "error": "user_name is required" }`
+  - **Content:** 
+    ```json
+    {
+      "error": "user_name is required"
+    }
+    ```
   - **Code:** 500
-  - **Content:** `{ "error": "error message" }`
+  - **Content:** 
+    ```json
+    {
+      "error": "error message"
+    }
+    ```

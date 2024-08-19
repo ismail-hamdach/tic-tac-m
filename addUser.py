@@ -12,8 +12,8 @@ def addUser(user_name):
     try:
 
         # MySQL Database Connection 
-        db, cursor = dbInitConnection()
-        print("Connected to MySQL database")
+        # db, cursor = dbInitConnection()
+        # print("Connected to MySQL database")
 
         # Connect to the ZKTeco device
         conn = None
@@ -41,15 +41,16 @@ def addUser(user_name):
         print(f"Fingerprint captured and enrolled for user {user_id}")
 
         # Store user information in MySQL database
-        sql = "INSERT INTO users (user_id, user_name, privilege, password) VALUES (%s, %s, %s, %s)"
-        val = (user_id, user_name, privilege, password)
+        # sql = "INSERT INTO users (user_id, user_name, privilege, password) VALUES (%s, %s, %s, %s)"
+        # val = (user_id, user_name, privilege, password)
 
-        cursor.execute(sql, val)
-        db.commit()
-        print(f"User {user_name} with ID {user_id} stored in MySQL database")
+        # cursor.execute(sql, val)
+        # db.commit()
+        # print(f"User {user_name} with ID {user_id} stored in MySQL database")
 
     except Exception as e:
         print(f"An error occurred: {e}")
+        # TODO: remove user from scanner in this section
         raise
 
 
@@ -58,9 +59,10 @@ def addUser(user_name):
         if conn:
             conn.disconnect()
             print("Disconnected from ZKTeco device")
-        cursor.close()
-        db.close()
-        print("Disconnected from MySQL database")
-    return user_id, user_name
+        # cursor.close()
+        # db.close()
+        # print("Disconnected from MySQL database")
+
+    return user_id, user_name, privilege, password
         
 # addUser("Aymane El cadi")
