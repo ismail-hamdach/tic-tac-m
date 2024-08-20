@@ -64,5 +64,28 @@ def addUser(user_name):
         # print("Disconnected from MySQL database")
 
     return user_id, user_name, privilege, password
-        
+
+def deleteUser(user_id):
+    try:
+        # Connect to the ZKTeco device
+        zk = zkInitConnection()
+        conn = zk.connect()
+        print("Connected to ZKTeco device for deletion")
+
+        # Delete the user from the device
+        conn.delete_user(uid=int(user_id))
+        print(f"User with ID {user_id} deleted from device")
+
+    except Exception as e:
+        print(f"An error occurred while deleting user: {e}")
+
+    finally:
+        # Close connection
+        if conn:
+            conn.disconnect()
+            print("Disconnected from ZKTeco device for deletion")
+
+# Example usage
+# deleteUser("user_id_to_delete")
+
 # addUser("Aymane El cadi")

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 import socket
 
-from addUser import addUser  # Corrected import statement
+from addUser import addUser, deleteUser  # Corrected import statement
 
 
 app = Flask(__name__)
@@ -38,6 +38,18 @@ def api_add_user():
             "privilege": privilege, 
             "password": password
         }}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_user', methods=['DELETE'])
+def api_delete_user():
+    user_id = request.json.get('user_id')
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+
+    try:
+        deleteUser(user_id)  # Call the deleteUser function
+        return jsonify({"message": f"User with ID {user_id} deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

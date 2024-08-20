@@ -43,35 +43,81 @@ def fetch_attendance(conn):
 
 def monitor_real_time(conn, db, cursor):
     try:
-        # Real-time attendance monitoring
         for att in conn.live_capture():
             if att is None:
-                pass
-            else:
-                print(f"Real-time attendance: User ID: {att.user_id}, Time: {att.timestamp}, Status: {att.punch}")
+                continue
 
-                # Check if the attendance log is already stored within the last minute
-                one_minute_ago = att.timestamp - timedelta(minutes=1)
+            print(f"Real-time attendance: User ID: {att.user_id}, Time: {att.timestamp}, Status: {att.punch}")
+
+            check_flag = 0
+            if att.punch == 0:  # Check-in
                 cursor.execute(
-                    "SELECT * FROM attendance_logs WHERE user_id = %s AND timestamp >= %s AND status = %s", 
-                    (att.user_id, one_minute_ago, att.punch)
+                    "SELECT * FROM attendance_logs WHERE user_id = %s ORDER BY timestamp DESC LIMIT 1",
+                    (att.user_id,)
                 )
-                result = cursor.fetchone()
+                last_record = cursor.fetchone()
 
-                # If the log does not exist within the last minute, insert it into the database
-                if result is None:
-                    sql = "INSERT INTO attendance_logs (user_id, timestamp, status) VALUES (%s, %s, %s)"
-                    val = (att.user_id, att.timestamp, att.punch)
-                    cursor.execute(sql, val)
-                    db.commit()
-                    print(f"New attendance stored: User ID = {att.user_id}, Timestamp = {att.timestamp}, Status = {att.punch}")
+                if last_record and last_record[5] is None:  # check_out is the 5th column
+                    cursor.execute(
+                        "UPDATE attendance_logs SET check_out = %s WHERE id = %s",
+                        (att.timestamp, last_record[0])  # Assuming id is the 1st column
+                    )
+                    check_flag = 1
                 else:
-                    print(f"Duplicate attendance detected within the last minute. Skipping: User ID = {att.user_id}, Timestamp = {att.timestamp}, Status = {att.punch}")
+                    cursor.execute(
+                        "INSERT INTO attendance_logs (user_id, check_in) VALUES (%s, %s)",
+                        (att.user_id, att.timestamp)
+                    )
+                    check_flag = 2
+
+            elif att.punch == 1:  # Check-out
+                cursor.execute(
+                    "SELECT * FROM attendance_logs WHERE user_id = %s ORDER BY timestamp DESC LIMIT 1",
+                    (att.user_id,)
+                )
+                last_record = cursor.fetchone()
+
+                if last_record and last_record[5] is None:  # check_out is the 6th column
+                    cursor.execute(
+                        "UPDATE attendance_logs SET check_out = %s WHERE id = %s",
+                        (att.timestamp, last_record[0])  # id is the 1st column
+                    )
+                    check_flag = 1
+
+            # New logic for attendance_checks
+            today = datetime.now().date()
+            cursor.execute(
+                "SELECT * FROM attendance_checks WHERE date = %s",
+                (today,)
+            )
+            today_record = cursor.fetchone()
+
+            if not today_record:
+                cursor.execute(
+                    "INSERT INTO attendance_checks (date, check_in, check_out, updated_at) VALUES (%s, 0, 0, %s)",
+                    (today, datetime.now())
+                )
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                last_id = cursor.fetchone()[0]
+                today_record = (last_id, today, 0, 0, datetime.now())
+
+            if check_flag == 1:
+                cursor.execute(
+                    "UPDATE attendance_checks SET check_out = check_out + 1, updated_at = %s WHERE id = %s",
+                    (datetime.now(), today_record[0])  # Assuming id is the 1st column
+                )
+            elif check_flag == 2:
+                cursor.execute(
+                    "UPDATE attendance_checks SET check_in = check_in + 1, updated_at = %s WHERE id = %s",
+                    (datetime.now(), today_record[0])  # Assuming id is the 1st column
+                )
+
+            db.commit()
+            print(f"Attendance processed: User ID = {att.user_id}, Timestamp = {att.timestamp}, Status = {'Check-in' if att.punch == 0 else 'Check-out'}")
 
     except Exception as e:
         print(f"Error monitoring real-time attendance: {e}")
 
     finally:
-        # Close the database connection if necessary
         cursor.close()
         db.close()
