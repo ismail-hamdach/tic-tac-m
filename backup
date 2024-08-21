@@ -1,0 +1,16 @@
+# TODO: check if attentance is check-in or check-out
+                # in case of Check-in
+                # TODO: check if last check-in of the same user has a check-out
+                # in case of the check-in has not check-out 
+                # TODO: check if last check-in is for today
+                # TODO: in case of the check-in not for today, put check-out as a null
+                # TODO: in case of the check-in is for today, add this as a check-out 
+                # in case of the check-in has a check-out 
+                # TODO: add new check-in with no check-out data
+                # in case of the check-out
+                # TODO: rectrieve last check-in of the current user 
+                # in case the check-in has a check-out 
+                # TODO: add a new check-in
+                # in case the check-in has no check-out
+                # TODO: in case if the check-in is for today, add as a check-out
+                # TODO: in case if the check-in is not for today, put check-out as a null
