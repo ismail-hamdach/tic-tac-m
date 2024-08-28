@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 
 
-def addUser(user_name):
+def addUser(user_name, ip_address, port):
     try:
 
         # MySQL Database Connection 
@@ -17,7 +17,7 @@ def addUser(user_name):
 
         # Connect to the ZKTeco device
         conn = None
-        zk = zkInitConnection()
+        zk = zkInitConnection(ip_address, port)
         # Establish connection to the device
         conn = zk.connect()
         print("Connected to ZKTeco device")

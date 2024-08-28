@@ -8,8 +8,8 @@ ip = os.getenv('DEVICE_IP')
 port = int(os.getenv('DEVICE_PORT'))
 
 
-def zkInitConnection():
-    return ZK(ip, port)
+def zkInitConnection(ip_address=ip, portNumber=port):
+    return ZK(ip_address, int(portNumber))
 
 def connect_device(zk):
     try:
@@ -85,9 +85,9 @@ def monitor_real_time(conn, db, cursor):
                     check_flag = 1
 
             # New logic for attendance_checks
-            today = datetime.now().date()
+            today = datetime.combine(datetime.now().date(), datetime.min.time())  # Set to today's date after midnight
             cursor.execute(
-                "SELECT * FROM attendance_checks WHERE date = %s",
+                "SELECT * FROM attendance_checks WHERE date > %s",  # Changed to '>' for dates after today
                 (today,)
             )
             today_record = cursor.fetchone()
