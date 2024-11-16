@@ -18,7 +18,7 @@ def dbInitConnection(host=os.getenv('PYTHON_DB_HOST'), port=os.getenv('PYTHON_DB
         password=password,
         database=database
     )
-    cursor = db.cursor()
+    cursor = db.cursor(dictionary=True)
     return db, cursor
 
 # Close MySQL Connection
