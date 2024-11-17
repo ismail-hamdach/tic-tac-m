@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-db_host = os.getenv('DB_HOST')
-db_user = os.getenv('DB_USER')
-db_password = os.getenv('DB_PASSWORD')
-db_name = os.getenv('DB_NAME')
+PYTHON_DB_host = os.getenv('PYTHON_DB_HOST')
+PYTHON_DB_user = os.getenv('PYTHON_DB_USER')
+PYTHON_DB_password = os.getenv('PYTHON_DB_PASSWORD')
+PYTHON_DB_name = os.getenv('PYTHON_DB_NAME')
 
 device_ip = os.getenv('DEVICE_IP')
 device_port = os.getenv('DEVICE_PORT')
@@ -19,7 +19,7 @@ device_port = os.getenv('DEVICE_PORT')
 def dbSync():
     try:
         # MySQL Connection
-        db, cursor = dbInitConnection(db_host, db_user, db_password, db_name)
+        db, cursor = dbInitConnection(PYTHON_DB_host, PYTHON_DB_user, PYTHON_DB_password, PYTHON_DB_name)
         print("Connected to MySQL database")
 
         # ZKTeco Device Connection

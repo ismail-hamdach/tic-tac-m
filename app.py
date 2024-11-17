@@ -26,11 +26,13 @@ def check_connection():
 @app.route('/add_user', methods=['POST'])
 def api_add_user():
     user_name = request.json.get('user_name')
-    if not user_name:
-        return jsonify({"error": "user_name is required"}), 400
+    ip_address = request.json.get('ip_address')
+    port = request.json.get('port')
+    if not user_name or not ip_address or not port:
+        return jsonify({"error": "user_name, ip_address and port are required"}), 400
 
     try:
-        user_id, user_name, privilege, password = addUser(user_name)
+        user_id, user_name, privilege, password = addUser(user_name, ip_address, port)
         
         return jsonify({"message": f"User {user_name} added successfully", "data": {
             "user_id": user_id,
