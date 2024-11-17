@@ -69,13 +69,14 @@ def monitor_real_time(conn, db, cursor):
                     # New condition to check if the last check-in was done less than 5 minutes ago
                     if (att.timestamp - last_record['check_in']).total_seconds() < 300:  # 300 seconds = 5 minutes
                         print("Ignoring check-out: last check-in was less than 5 minutes ago")  # Debugging message
-                        return  # Ignore the check-out
-                    print('Update check_out in attendance_logs')
-                    cursor.execute(
+                        check_flag = 3
+                    else :
+                        print('Update check_out in attendance_logs')
+                        cursor.execute(
                         "UPDATE attendance_logs SET check_out = %s WHERE id = %s",  # Update check_out time for the last record
-                        (att.timestamp, last_record['id'])  # Assuming id is the 1st column
-                    )
-                    check_flag = 1  # Set check_flag to indicate check-out was updated
+                            (att.timestamp, last_record['id'])  # Assuming id is the 1st column
+                        )
+                        check_flag = 1  # Set check_flag to indicate check-out was updated
                 else:
                     print('Insert new check_in in attendance_logs')
                     cursor.execute(
@@ -94,10 +95,7 @@ def monitor_real_time(conn, db, cursor):
                 last_record = cursor.fetchone()  # Fetch the last attendance record
 
                 if last_record and last_record['check_out'] is None:  # Check if last record exists and check_out is None
-                    # New condition to check if the last check-in was done less than 5 minutes ago
-                    if (att.timestamp - datetime.fromisoformat(last_record['check_in'])).total_seconds() < 300:  # 300 seconds = 5 minutes
-                        print("Ignoring check-out: last check-in was less than 5 minutes ago")  # Debugging message
-                        return  # Ignore the check-out
+                    
                     print('Update check_out in attendance_logs')
                     cursor.execute(
                         "UPDATE attendance_logs SET check_out = %s WHERE id = %s",  # Update check_out time for the last record
@@ -113,7 +111,6 @@ def monitor_real_time(conn, db, cursor):
                 (today,)
             )
             today_record = cursor.fetchone()  # Fetch today's attendance record
-            print(f"Fetched today's record: {today_record}")  # Debugging flag
 
             if not today_record:  # If no record exists for today
                 print("No record found for today, inserting new record")  # Debugging flag
@@ -123,9 +120,14 @@ def monitor_real_time(conn, db, cursor):
                 )
                 # cursor.execute("SELECT LAST_INSERT_ID()")  # Get the ID of the last inserted record
                 last_id = cursor.lastrowid  # Fetch the last inserted ID
-                today_record = (last_id, today, 0, 0, datetime.now())  # Create a tuple for today's record
+                today_record = {
+                    'id': last_id,
+                    'check_in': 0,
+                    'check_out': 0,
+                }
                 print(f"Inserted new record with ID: {last_id}")  # Debugging flag
 
+            print(f"Fetched today's record: {today_record}")  # Debugging flag
             # Update attendance_checks based on check_flag
             if check_flag == 1:  # If check-out was updated
                 print("Updating attendance_checks for check-out")  # Flag 6
